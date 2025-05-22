@@ -5,6 +5,7 @@ function FilterImmobilier() {
     type: '',
     surface_min: '',
     surface_max: '',
+    ville:'',
   });
 
   const [results, setResults] = useState([]);
@@ -25,6 +26,7 @@ function FilterImmobilier() {
     if (filters.type) params.append('type', filters.type);
     if (filters.surface_min) params.append('surface_min', filters.surface_min);
     if (filters.surface_max) params.append('surface_max', filters.surface_max);
+    if (filters.ville) params.append('ville', filters.ville);
 
     try {
       const res = await fetch(`http://localhost:8000/api/immobiliers/filter?${params.toString()}`);
@@ -45,7 +47,16 @@ function FilterImmobilier() {
     <div>
       <h1>hhhhh</h1>
       <h2>فلترة العقارات</h2>
-
+       <div>
+        <label>المساحة القصوى (م²):</label>
+        <input
+          type="text"
+          name="ville"
+          value={filters.ville}
+          onChange={handleChange}
+          placeholder="مثلا 200"
+        />
+      </div>
       <div>
         <label>النوع:</label>
         <select name="type" value={filters.type} onChange={handleChange}>
@@ -55,6 +66,7 @@ function FilterImmobilier() {
           <option value="villa">Villa</option>
         </select>
       </div>
+      
 
       <div>
         <label>المساحة الدنيا (م²):</label>

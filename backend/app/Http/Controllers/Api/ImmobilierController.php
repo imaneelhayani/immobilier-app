@@ -16,7 +16,9 @@ class ImmobilierController extends Controller
         if ($request->has('type') && $request->type != '') {
             $query->where('type', $request->type);
         }
-
+ if ($request->has('ville') && $request->ville != '') {
+        $query->where('ville', $request->ville);
+    }
         // فلترة حسب المساحة الدنيا (surface_min)
         if ($request->has('surface_min') && is_numeric($request->surface_min)) {
             $query->where('surface', '>=', $request->surface_min);

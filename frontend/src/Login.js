@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -8,7 +11,7 @@ function Login() {
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState('');
-  const [success, setSuccess] = useState(false); // هادي باش نعرف إذا نجاح ولا خطأ
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -22,7 +25,7 @@ function Login() {
 
     setErrors({});
     setMessage('');
-    setSuccess(false); // نرجعوها false قبل الطلب
+    setSuccess(false);
 
     try {
       const res = await fetch('http://localhost:8000/api/login', {
@@ -49,7 +52,11 @@ function Login() {
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
-        // window.location.href = '/dashboard';
+        if (data.user.role === 'admin') {
+          navigate('/dashboard');  // توجيه لصفحة الادمن
+        } else {
+          navigate('/home');       // توجيه لصفحة المستخدم العادي
+        }
       }
     } catch (error) {
       setSuccess(false);
@@ -61,7 +68,6 @@ function Login() {
     <div>
       <h2>Login</h2>
 
-      {/* رسالة النجاح أو الخطأ العامة */}
       {message && (
         <p style={{ color: success ? 'green' : 'red' }}>
           {message}

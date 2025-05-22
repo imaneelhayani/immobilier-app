@@ -16,5 +16,7 @@ class Immobilier extends Model
         'etat',
         'prix',
         'adresse',
+        'ville',
+        'photo',
     ];
 }

@@ -7,7 +7,8 @@ import About from './Pages/About';
 import Contact from './Pages/Contact';
 import MainLayout from './Layout/MainLayout';
 import Register from './Pages/Register';
-import Login from './Login';
+import Dashboard from './Pages/Dashboard';
+import Login from './Pages/Login';
 function App() {
   return (
     <BrowserRouter>
@@ -17,6 +18,8 @@ function App() {
         <Route path="/contact" element={<MainLayout><Contact /></MainLayout>} />
         <Route path="/Register" element={<MainLayout><Register /></MainLayout>} />
         <Route path="/Login" element={<MainLayout><Login /></MainLayout>} />
+        <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
+        
       </Routes>
     </BrowserRouter>
   );
