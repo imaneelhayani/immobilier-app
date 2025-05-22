@@ -1,0 +1,16 @@
+
+
+
+* {
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	outline: none;
+	transition: 1s;
+}
+
+
+html {
+	overflow-x: hidden;
+	
+}

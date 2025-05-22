@@ -1,0 +1,7 @@
+
+// src/pages/Home.jsx
+import React from 'react';
+
+export default function Home() {
+  return <h2 className="text-2xl">Welcome to the Home Page</h2>;
+}
