@@ -1,10 +1,15 @@
 // src/components/Footer.jsx
 import React from 'react';
+import '../Styles/Footer.css';
 
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white text-center py-4 mt-10">
-      <p>© {new Date().getFullYear()} NeuralBox - جميع الحقوق محفوظة</p>
+     <footer>
+      <p>© {new Date().getFullYear()} Tous droits réservés - Votre partenaire de confiance en gestion immobilière.</p>
+      <p>
+        Nous offrons une plateforme complète pour faciliter la gestion de vos biens immobiliers, 
+        simplifier les transactions et connecter propriétaires, locataires et acheteurs en toute confiance.
+      </p>
     </footer>
   );
 }

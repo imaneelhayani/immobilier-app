@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../Styles/FilterImmobilier.css';
+import '../Styles/main.css';
+
 
 function FilterImmobilier() {
   const [filters, setFilters] = useState({
@@ -7,13 +10,15 @@ function FilterImmobilier() {
     surface_min: '',
     surface_max: '',
     ville: '',
-    etat_transation:'',
+    etat_transation: '',
+    budget: '',
   });
 
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();  // hook ديال التوجيه
+  const [status, setStatus] = useState('');
+  const [loadingFilter, setLoadingFilter] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleFilterChange = (e) => {
     setFilters(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -21,95 +26,88 @@ function FilterImmobilier() {
   };
 
   const handleFilter = async () => {
-    setLoading(true);
-
+    setLoadingFilter(true);
     const params = new URLSearchParams();
 
-    if (filters.type) params.append('type', filters.type);
-    if (filters.surface_min) params.append('surface_min', filters.surface_min);
-    if (filters.surface_max) params.append('surface_max', filters.surface_max);
-    if (filters.ville) params.append('ville', filters.ville);
-    if (filters.etat_transation) params.append('etat_transation', filters.etat_transation);
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.append(key, value);
+    });
 
     try {
       const res = await fetch(`http://localhost:8000/api/immobiliers/filter?${params.toString()}`);
       const data = await res.json();
-      if (data.success) {
-        // خزّن النتائج فالـ localStorage
-        localStorage.setItem('immobilierResults', JSON.stringify(data.data));
-        // توجه لصفحة النتائج
-        navigate('/resultas');
-      } else {
-        // إذا ماكانتش نتائج، كذلك خزن مصفوفة فارغة
-        localStorage.setItem('immobilierResults', JSON.stringify([]));
-        navigate('/resultas');
-      }
+
+      localStorage.setItem('immobilierResults', JSON.stringify(data.success ? data.data : []));
+      navigate('/resultas');
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Erreur de filtrage :', error);
       localStorage.setItem('immobilierResults', JSON.stringify([]));
       navigate('/resultas');
     }
-    setLoading(false);
+
+    setLoadingFilter(false);
   };
 
   return (
-    <div>
-      <h2>فلترة العقارات</h2>
-       <div>
-        <label>etat_transation:</label>
-        <select name="etat_transation" value={filters.etat_transation} onChange={handleChange}>
-          <option value="">-- كل الأنواع --</option>
-          <option value="louer">à louer</option>
-          <option value="acheter">à vendre</option>
-        </select>
-      </div>
-      <div>
-        <label>المدينة:</label>
-        <input
-          type="text"
-          name="ville"
-          value={filters.ville}
-          onChange={handleChange}
-          placeholder="مثلا الدار البيضاء"
-        />
+    <>
+    <section className="filter-section max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+      <p className="filter-intro">Trouvez facilement la maison ou l'appartement de vos rêves avec nos filtres personnalisés.</p>
+      <h2 className="text-2xl font-bold text-center mb-6">Filtrer les biens immobiliers</h2>
+
+      <div className="filters-row">
+        <div className="filter-item">
+          <label htmlFor="etat_transation" className="block mb-1 font-semibold text-gray-700">Type de transaction</label>
+          <select name="etat_transation" value={filters.etat_transation} onChange={handleFilterChange}>
+            <option value="">-- Tous --</option>
+            <option value="louer">À louer</option>
+            <option value="acheter">À vendre</option>
+          </select>
+        </div>
+
+        <div className="filter-item">
+          <label htmlFor="ville" className="block mb-1 font-semibold text-gray-700">Ville</label>
+          <input type="text" name="ville" value={filters.ville} onChange={handleFilterChange} placeholder="Ex: Casablanca" />
+        </div>
+
+        <div className="filter-item">
+          <label htmlFor="type" className="block mb-1 font-semibold text-gray-700">Type</label>
+          <select name="type" value={filters.type} onChange={handleFilterChange}>
+            <option value="">-- Tous --</option>
+            <option value="maison">Maison</option>
+            <option value="appartement">Appartement</option>
+            <option value="villa">Villa</option>
+          </select>
+        </div>
+
+        <div className="filter-item">
+          <label htmlFor="surface_min" className="block mb-1 font-semibold text-gray-700">Surface min (m²)</label>
+          <input type="number" name="surface_min" value={filters.surface_min} onChange={handleFilterChange} placeholder="50" />
+        </div>
+
+        <div className="filter-item">
+          <label htmlFor="surface_max" className="block mb-1 font-semibold text-gray-700">Surface max (m²)</label>
+          <input type="number" name="surface_max" value={filters.surface_max} onChange={handleFilterChange} placeholder="200" />
+        </div>
+
+        <div className="filter-item">
+          <label htmlFor="budget" className="block mb-1 font-semibold text-gray-700">Budget max (MAD)</label>
+          <input type="number" name="budget" value={filters.budget} onChange={handleFilterChange} placeholder="500000" />
+        </div>
       </div>
 
-      <div>
-        <label>النوع:</label>
-        <select name="type" value={filters.type} onChange={handleChange}>
-          <option value="">-- كل الأنواع --</option>
-          <option value="maison">Maison</option>
-          <option value="appartement">Appartement</option>
-          <option value="villa">Villa</option>
-        </select>
+      <div className="btn-container-1">
+        <button
+          onClick={handleFilter}
+          disabled={loadingFilter}
+          className={loadingFilter ? 'btn disabled' : 'btn-1'}
+        >
+          {loadingFilter ? 'Chargement...' : 'Rechercher'}
+        </button>
       </div>
+    </section>
+    
 
-      <div>
-        <label>المساحة الدنيا (م²):</label>
-        <input
-          type="number"
-          name="surface_min"
-          value={filters.surface_min}
-          onChange={handleChange}
-          placeholder="مثلا 50"
-        />
-      </div>
-
-      <div>
-        <label>المساحة القصوى (م²):</label>
-        <input
-          type="number"
-          name="surface_max"
-          value={filters.surface_max}
-          onChange={handleChange}
-          placeholder="مثلا 200"
-        />
-      </div>
-
-      <button onClick={handleFilter} disabled={loading}>
-        {loading ? 'جار التحميل...' : 'ابحث'}
-      </button>
-    </div>
+    </>
   );
 }
 
