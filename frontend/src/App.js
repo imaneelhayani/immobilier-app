@@ -1,14 +1,20 @@
 import React from 'react';
 import { BrowserRouter , Routes, Route } from 'react-router-dom';
 
-
+//import 'bootstrap/dist/css/bootstrap.min.css';
 import Home from './Pages/Home';
 import About from './Pages/About';
 import Contact from './Pages/Contact';
 import MainLayout from './Layout/MainLayout';
 import Register from './Pages/Register';
 import Dashboard from './Pages/Dashboard';
+import ResultsPage from './Pages/ResultsPage';
 import Login from './Pages/Login';
+import Proprietes from './Pages/Proprietes';
+import AjouterPropriete from './Pages/AjouterPropriete';
+import ModifierPropriete from './Pages/ModifierPropriete';
+import Clients from './Pages/Clients';
+import Transactions from './Pages/Transactions';
 function App() {
   return (
     <BrowserRouter>
@@ -19,7 +25,12 @@ function App() {
         <Route path="/Register" element={<MainLayout><Register /></MainLayout>} />
         <Route path="/Login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
-        
+        <Route path="/resultas" element={<MainLayout><ResultsPage /></MainLayout>} />
+        <Route path="/Proprietes" element={<MainLayout><Proprietes /></MainLayout>} />
+        <Route path="/AjouterPropriete" element={<MainLayout><AjouterPropriete /></MainLayout>} />
+        <Route path="/ModifierPropriete/:id" element={<MainLayout><ModifierPropriete /></MainLayout>} />
+        <Route path="/Clients" element={<MainLayout><Clients /></MainLayout>} />
+        <Route path="/Transactions" element={<MainLayout><Transactions /></MainLayout>} />
       </Routes>
     </BrowserRouter>
   );

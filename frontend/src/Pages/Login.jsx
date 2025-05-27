@@ -55,7 +55,7 @@ function Login() {
         if (data.user.role === 'admin') {
           navigate('/dashboard');  // توجيه لصفحة الادمن
         } else {
-          navigate('/home');       // توجيه لصفحة المستخدم العادي
+          navigate('/');       // توجيه لصفحة المستخدم العادي
         }
       }
     } catch (error) {
