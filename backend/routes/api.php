@@ -19,3 +19,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/immobiliers', [PropertyController::class, 'store']);
     Route::post('/demandes', [DemandeController::class, 'store']);
 });
+use App\Http\Controllers\Api\ContactController;
+
+Route::post('/contacts', [ContactController::class, 'store']);

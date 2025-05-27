@@ -1,167 +1,126 @@
-// src/pages/AjouterPropriete.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-function AjouterPropriete() {
-  const navigate = useNavigate();
+function Contact() {
   const [formData, setFormData] = useState({
-    type: '',
-    ville: '',
-    adresse: '',
-    prix: '',
-    prix_min: '',
-    prix_max: '',
-    surface: '',
-    nbr_chambres: '',
-    nbr_salles_bain: '',
-    etat: 'disponible',
+    nom: '',
+    prenom: '',
+    email: '',
+    telephone: '',
+    message: '',
   });
 
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState({});
+
   const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dataToSend = {
-      ...formData,
-      prix: Number(formData.prix),
-      prix_min: Number(formData.prix_min),
-      prix_max: Number(formData.prix_max),
-      surface: Number(formData.surface),
-      nbr_chambres: Number(formData.nbr_chambres),
-      nbr_salles_bain: Number(formData.nbr_salles_bain),
-    };
 
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        'http://127.0.0.1:8000/api/immobiliers',
-        dataToSend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-      navigate('/proprietes');
+      const res = await axios.post('http://127.0.0.1:8000/api/contacts', formData);
+      setSuccessMessage(res.data.message);
+      setFormData({
+        nom: '',
+        prenom: '',
+        email: '',
+        telephone: '',
+        message: '',
+      });
+      setErrors({});
     } catch (error) {
-      const serverError = error.response?.data || error.message;
-      console.error('Erreur lors de l\'ajout:', serverError);
-      alert('Server Error:\n' + JSON.stringify(serverError, null, 2));
+      if (error.response && error.response.status === 422) {
+        setErrors(error.response.data.errors);
+      } else {
+        console.error('Erreur serveur', error);
+      }
     }
   };
 
   return (
-    <div className="form-container">
-      <h2>Ajouter une nouvelle propriété</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Type</label>
-        <select name="type" value={formData.type} onChange={handleChange} required>
-          <option value="">— Choisir le type —</option>
-          <option value="maison">Maison</option>
-          <option value="villa">Villa</option>
-          <option value="appartement">Appartement</option>
-          <option value="berau">Bureau</option>
-          <option value="local_commercial">Local Commercial</option>
-        </select>
+    <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+      <h2 className="text-2xl font-bold mb-6 text-center text-blue-600">Contactez-nous</h2>
 
-        <label>Ville</label>
-        <select name="ville" value={formData.ville} onChange={handleChange} required>
-          <option value="">— Choisir la ville —</option>
-          <option value="tanger">Tanger</option>
-          <option value="casa">Casablanca</option>
-          <option value="rabat">Rabat</option>
-          <option value="marrakech">Marrakech</option>
-          <option value="fes">Fès</option>
-        </select>
+      {successMessage && (
+        <div className="mb-4 text-green-600 font-medium">{successMessage}</div>
+      )}
 
-        <label>Adresse</label>
-        <input
-          type="text"
-          name="adresse"
-          placeholder="Adresse complète"
-          value={formData.adresse}
-          onChange={handleChange}
-          required
-        />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block">Nom</label>
+          <input
+            type="text"
+            name="nom"
+            value={formData.nom}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+          />
+          {errors.nom && <p className="text-red-500 text-sm">{errors.nom[0]}</p>}
+        </div>
 
-        <label>Prix (MAD)</label>
-        <input
-          type="number"
-          name="prix"
-          placeholder="Prix"
-          value={formData.prix}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <label className="block">Prénom</label>
+          <input
+            type="text"
+            name="prenom"
+            value={formData.prenom}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+          />
+          {errors.prenom && <p className="text-red-500 text-sm">{errors.prenom[0]}</p>}
+        </div>
 
-        <label>Prix min (MAD)</label>
-        <input
-          type="number"
-          name="prix_min"
-          placeholder="Prix min"
-          value={formData.prix_min}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <label className="block">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+          />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email[0]}</p>}
+        </div>
 
-        <label>Prix max (MAD)</label>
-        <input
-          type="number"
-          name="prix_max"
-          placeholder="Prix max"
-          value={formData.prix_max}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <label className="block">Téléphone</label>
+          <input
+            type="text"
+            name="telephone"
+            value={formData.telephone}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+          />
+          {errors.telephone && <p className="text-red-500 text-sm">{errors.telephone[0]}</p>}
+        </div>
 
-        <label>Surface (m²)</label>
-        <input
-          type="number"
-          name="surface"
-          placeholder="Surface"
-          value={formData.surface}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <label className="block">Message</label>
+          <textarea
+            name="message"
+            value={formData.message}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2"
+            rows="4"
+          ></textarea>
+          {errors.message && <p className="text-red-500 text-sm">{errors.message[0]}</p>}
+        </div>
 
-        <label>Nombre de chambres</label>
-        <input
-          type="number"
-          name="nbr_chambres"
-          placeholder="Chambres"
-          value={formData.nbr_chambres}
-          onChange={handleChange}
-          required
-        />
-
-        <label>Nombre de salles de bain</label>
-        <input
-          type="number"
-          name="nbr_salles_bain"
-          placeholder="Salles de bain"
-          value={formData.nbr_salles_bain}
-          onChange={handleChange}
-          required
-        />
-
-        <label>État</label>
-        <select name="etat" value={formData.etat} onChange={handleChange} required>
-          <option value="disponible">Disponible</option>
-          <option value="vendue">Vendue</option>
-          <option value="en_negociation">En négociation</option>
-        </select>
-
-        <button type="submit">Ajouter</button>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Envoyer le message
+        </button>
       </form>
     </div>
   );
 }
 
-export default AjouterPropriete;
+export default Contact;
