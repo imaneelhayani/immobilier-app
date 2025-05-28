@@ -21,6 +21,7 @@ return [
     'allowed_origins' => [
         'http://localhost:3000',
         'http://localhost:3001',
+        
     ],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],

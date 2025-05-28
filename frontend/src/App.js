@@ -15,6 +15,8 @@ import AjouterPropriete from './Pages/AjouterPropriete';
 import ModifierPropriete from './Pages/ModifierPropriete';
 import Clients from './Pages/Clients';
 import Transactions from './Pages/Transactions';
+import CommandeModal from './Pages/CommandeModal';
+import Commandes from './Pages/Commandes.jsx';
 function App() {
   return (
     <BrowserRouter>
@@ -23,7 +25,7 @@ function App() {
         <Route path="/about" element={<MainLayout><About /></MainLayout>} />
         <Route path="/contact" element={<MainLayout><Contact /></MainLayout>} />
         <Route path="/Register" element={<MainLayout><Register /></MainLayout>} />
-        <Route path="/Login" element={<MainLayout><Login /></MainLayout>} />
++ <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
         <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
         <Route path="/resultas" element={<MainLayout><ResultsPage /></MainLayout>} />
         <Route path="/Proprietes" element={<MainLayout><Proprietes /></MainLayout>} />
@@ -31,6 +33,8 @@ function App() {
         <Route path="/ModifierPropriete/:id" element={<MainLayout><ModifierPropriete /></MainLayout>} />
         <Route path="/Clients" element={<MainLayout><Clients /></MainLayout>} />
         <Route path="/Transactions" element={<MainLayout><Transactions /></MainLayout>} />
+        <Route path="/CommandeModal" element={<MainLayout><CommandeModal /></MainLayout>} />
+        <Route path="/Commandes" element={<MainLayout><Commandes /></MainLayout>} />
       </Routes>
     </BrowserRouter>
   );
