@@ -44,13 +44,13 @@ function Login() {
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('user', JSON.stringify(data.user));
 
-        if (propertyId) {
-          navigate(`/commandes?propertyId=${propertyId}`);
+        if (data.user.role === 'admin') {
+          navigate('/dashboard');
         } else {
-          if (data.user.role === 'admin') {
-            navigate('/dashboard');
+          if (propertyId) {
+            navigate(`/commandes?propertyId=${propertyId}`);
           } else {
-            navigate('/commandes');
+            navigate('/');
           }
         }
       }
@@ -60,7 +60,6 @@ function Login() {
     }
   };
 
-  // Styles
   const styles = {
     container: {
       maxWidth: '400px',
@@ -69,7 +68,6 @@ function Login() {
       boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
       borderRadius: '8px',
       backgroundColor: '#fff',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     },
     title: {
       textAlign: 'center',
@@ -88,7 +86,6 @@ function Login() {
       display: 'block',
       marginBottom: '6px',
       fontWeight: '600',
-      color: '#333',
     },
     input: {
       width: '100%',
@@ -96,9 +93,6 @@ function Login() {
       marginBottom: '10px',
       borderRadius: '5px',
       border: '1px solid #ced4da',
-      fontSize: '1rem',
-      outlineColor: '#0d6efd',
-      transition: 'border-color 0.3s',
     },
     inputError: {
       borderColor: '#dc3545',
@@ -109,7 +103,6 @@ function Login() {
       marginTop: '-8px',
       marginBottom: '8px',
       fontSize: '0.875rem',
-      fontWeight: '500',
     },
     button: {
       width: '100%',
@@ -120,17 +113,11 @@ function Login() {
       borderRadius: '6px',
       fontSize: '1.1rem',
       cursor: 'pointer',
-      fontWeight: '700',
-      transition: 'background-color 0.3s',
-    },
-    buttonHover: {
-      backgroundColor: '#084cd6',
     },
     registerText: {
       marginTop: '15px',
       textAlign: 'center',
       fontSize: '0.9rem',
-      color: '#555',
     },
     registerLink: {
       color: '#0d6efd',
@@ -140,27 +127,22 @@ function Login() {
     },
   };
 
-  const [hover, setHover] = useState(false);
-
   return (
     <div style={styles.container}>
       <h2 style={styles.title}>Connexion</h2>
-
       {message && <p style={styles.message}>{message}</p>}
-
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email" style={styles.label}>Email :</label>
           <input
             type="email"
             name="email"
-            id="email"
+            value={formData.email}
+            onChange={handleChange}
             style={{
               ...styles.input,
               ...(errors.email ? styles.inputError : {})
             }}
-            value={formData.email}
-            onChange={handleChange}
             placeholder="exemple@exemple.com"
           />
           {errors.email && <p style={styles.errorText}>{errors.email[0]}</p>}
@@ -171,26 +153,18 @@ function Login() {
           <input
             type="password"
             name="password"
-            id="password"
+            value={formData.password}
+            onChange={handleChange}
             style={{
               ...styles.input,
               ...(errors.password ? styles.inputError : {})
             }}
-            value={formData.password}
-            onChange={handleChange}
             placeholder="********"
           />
           {errors.password && <p style={styles.errorText}>{errors.password[0]}</p>}
         </div>
 
-        <button
-          type="submit"
-          style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-        >
-          Se connecter
-        </button>
+        <button type="submit" style={styles.button}>Se connecter</button>
       </form>
 
       <p style={styles.registerText}>

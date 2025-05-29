@@ -17,6 +17,8 @@ import Clients from './Pages/Clients';
 import Transactions from './Pages/Transactions';
 import CommandeModal from './Pages/CommandeModal';
 import Commandes from './Pages/Commandes.jsx';
+import Profile from './Pages/Profile.jsx';
+import Notifications from './Pages/Notifications.jsx';
 function App() {
   return (
     <BrowserRouter>
@@ -35,6 +37,8 @@ function App() {
         <Route path="/Transactions" element={<MainLayout><Transactions /></MainLayout>} />
         <Route path="/CommandeModal" element={<MainLayout><CommandeModal /></MainLayout>} />
         <Route path="/Commandes" element={<MainLayout><Commandes /></MainLayout>} />
+        <Route path="/Profile" element={<MainLayout><Profile /></MainLayout>} />
+        <Route path="/Notifications" element={<MainLayout><Notifications /></MainLayout>} />
       </Routes>
     </BrowserRouter>
   );

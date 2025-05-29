@@ -10,15 +10,17 @@ class Demande extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'immobilier_id',
-        'etat_transation',  // كما هو في قاعدة البيانات
-        'nom',
-        'prenom',
-        'telephone',
-        'adresse',
-        'date_demande',
-    ];
+    'user_id',
+    'immobilier_id',
+    'etat_transation',
+    'nom',
+    'prenom',
+    'telephone',
+    'adresse',
+    'date_demande',
+    'status', // زيد هادي
+];
+
 
     public function user()
     {
@@ -29,4 +31,5 @@ class Demande extends Model
     {
         return $this->belongsTo(Immobilier::class);
     }
+    
 }

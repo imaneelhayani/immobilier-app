@@ -7,14 +7,12 @@ use App\Models\Immobilier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 
 class DemandeController extends Controller
 {
-    
-
     public function store(Request $request)
     {
-        // Validation ديال البيانات
         $request->validate([
             'immobilier_id' => 'required|exists:immobiliers,id',
             'nom' => 'nullable|string|max:255',
@@ -23,21 +21,17 @@ class DemandeController extends Controller
             'adresse' => 'nullable|string|max:500',
         ]);
 
-        // استرجاع المستخدم الحالي
         $user = Auth::user();
 
-        // التأكد من وجود المستخدم
         if (!$user) {
             return response()->json(['message' => 'Vous devez être connecté'], 401);
         }
 
-        // التحقق من وجود العقار
         $immobilier = Immobilier::find($request->immobilier_id);
         if (!$immobilier) {
             return response()->json(['message' => 'Propriété introuvable'], 404);
         }
 
-        // إنشاء طلب جديد
         $demande = Demande::create([
             'user_id' => $user->id,
             'immobilier_id' => $immobilier->id,
@@ -46,13 +40,40 @@ class DemandeController extends Controller
             'prenom' => $request->prenom,
             'telephone' => $request->telephone,
             'adresse' => $request->adresse,
-            // 'date_demande' يمكن قاعدة البيانات تضيفها تلقائياً إذا كانت مفعلة timestamps
         ]);
 
-        // إرجاع رسالة نجاح مع بيانات الطلب
         return response()->json([
             'message' => 'Demande enregistrée avec succès',
             'demande' => $demande,
         ]);
+    }
+
+    public function index()
+    {
+        $demandes = Demande::with(['user', 'immobilier'])->get();
+        return response()->json($demandes);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:accepté,refusé',
+        ]);
+
+        $demande = Demande::findOrFail($id);
+        $demande->status = $request->status;
+        $demande->save();
+
+        // إنشاء Notification للمستخدم
+        Notification::create([
+            'user_id' => $demande->user_id,
+            'title' => 'Mise à jour de votre demande',
+            'message' => $request->status === 'accepté'
+                ? 'Votre demande a été acceptée. Félicitations !'
+                : 'Votre demande a été refusée. Merci de votre intérêt.',
+            'is_read' => false,
+        ]);
+
+        return response()->json(['message' => 'Statut mis à jour et notification envoyée avec succès']);
     }
 }

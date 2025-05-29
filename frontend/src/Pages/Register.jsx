@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+  const propertyId = searchParams.get('propertyId');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -24,7 +28,6 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setErrors({});
     setMessage('');
     setSuccess(false);
@@ -39,11 +42,11 @@ function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        setErrors(data.errors || data);
+        setErrors(data.errors || {});
+        setMessage(data.message || 'Erreur');
       } else {
         setSuccess(true);
-        setMessage(data.message || 'Inscription réussie !');
-
+        setMessage('Inscription réussie !');
         setFormData({
           name: '',
           email: '',
@@ -51,9 +54,13 @@ function Register() {
           password_confirmation: '',
         });
 
-        // Redirection après 2 secondes vers login
         setTimeout(() => {
-          navigate('/login');
+          // ✅ redirection avec propertyId si كاين
+          if (propertyId) {
+            navigate(`/login?propertyId=${propertyId}`);
+          } else {
+            navigate('/login');
+          }
         }, 2000);
       }
     } catch (error) {
@@ -61,8 +68,8 @@ function Register() {
     }
   };
 
-  // Styles simples et modernes
-  const styles = {
+  // ... rest of the component stays the same (styles + form rendering)
+const styles = {
     container: {
       maxWidth: '400px',
       margin: '50px auto',
@@ -70,7 +77,6 @@ function Register() {
       borderRadius: '8px',
       backgroundColor: '#fff',
       boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     },
     title: {
       textAlign: 'center',
@@ -95,7 +101,6 @@ function Register() {
       display: 'block',
       marginBottom: '6px',
       fontWeight: '600',
-      color: '#333',
     },
     input: {
       width: '100%',
@@ -103,9 +108,6 @@ function Register() {
       marginBottom: '10px',
       borderRadius: '5px',
       border: '1px solid #ced4da',
-      fontSize: '1rem',
-      outlineColor: '#0d6efd',
-      transition: 'border-color 0.3s',
     },
     inputError: {
       borderColor: '#dc3545',
@@ -116,7 +118,6 @@ function Register() {
       marginTop: '-8px',
       marginBottom: '8px',
       fontSize: '0.875rem',
-      fontWeight: '500',
     },
     button: {
       width: '100%',
@@ -127,100 +128,82 @@ function Register() {
       borderRadius: '6px',
       fontSize: '1.1rem',
       cursor: 'pointer',
-      fontWeight: '700',
-      transition: 'background-color 0.3s',
-    },
-    buttonHover: {
-      backgroundColor: '#084cd6',
     },
   };
-
-  // Hover button state
-  const [hover, setHover] = useState(false);
-
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>Inscription Nouvel Utilisateur</h2>
-
+      <h2 style={styles.title}>Inscription</h2>
       {message && (
         <p style={success ? styles.messageSuccess : styles.messageError}>
           {message}
         </p>
       )}
-
-      <form onSubmit={handleSubmit} noValidate>
+      <form onSubmit={handleSubmit}>
         <div>
-          <label style={styles.label} htmlFor="name">Nom:</label>
+          <label htmlFor="name" style={styles.label}>Nom :</label>
           <input
             type="text"
             name="name"
-            id="name"
+            value={formData.name}
+            onChange={handleChange}
             style={{
               ...styles.input,
               ...(errors.name ? styles.inputError : {})
             }}
-            value={formData.name}
-            onChange={handleChange}
             placeholder="Votre nom complet"
           />
           {errors.name && <p style={styles.errorText}>{errors.name[0]}</p>}
         </div>
 
         <div>
-          <label style={styles.label} htmlFor="email">Email:</label>
+          <label htmlFor="email" style={styles.label}>Email :</label>
           <input
             type="email"
             name="email"
-            id="email"
+            value={formData.email}
+            onChange={handleChange}
             style={{
               ...styles.input,
               ...(errors.email ? styles.inputError : {})
             }}
-            value={formData.email}
-            onChange={handleChange}
             placeholder="exemple@exemple.com"
           />
           {errors.email && <p style={styles.errorText}>{errors.email[0]}</p>}
         </div>
 
         <div>
-          <label style={styles.label} htmlFor="password">Mot de passe:</label>
+          <label htmlFor="password" style={styles.label}>Mot de passe :</label>
           <input
             type="password"
             name="password"
-            id="password"
+            value={formData.password}
+            onChange={handleChange}
             style={{
               ...styles.input,
               ...(errors.password ? styles.inputError : {})
             }}
-            value={formData.password}
-            onChange={handleChange}
             placeholder="********"
           />
           {errors.password && <p style={styles.errorText}>{errors.password[0]}</p>}
         </div>
 
         <div>
-          <label style={styles.label} htmlFor="password_confirmation">Confirmer le mot de passe:</label>
+          <label htmlFor="password_confirmation" style={styles.label}>Confirmation :</label>
           <input
             type="password"
             name="password_confirmation"
-            id="password_confirmation"
-            style={styles.input}
             value={formData.password_confirmation}
             onChange={handleChange}
+            style={{
+              ...styles.input,
+              ...(errors.password_confirmation ? styles.inputError : {})
+            }}
             placeholder="********"
           />
+          {errors.password_confirmation && <p style={styles.errorText}>{errors.password_confirmation[0]}</p>}
         </div>
 
-        <button
-          type="submit"
-          style={hover ? { ...styles.button, ...styles.buttonHover } : styles.button}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-        >
-          S'inscrire
-        </button>
+        <button type="submit" style={styles.button}>S'inscrire</button>
       </form>
     </div>
   );

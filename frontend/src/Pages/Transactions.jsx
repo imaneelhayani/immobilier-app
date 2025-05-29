@@ -20,18 +20,50 @@ function Transactions() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/api/transactions');
-      setTransactions(response.data); // تأكد أن API كترجع array
+      const response = await axios.get('http://127.0.0.1:8000/api/demandes', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      setTransactions(response.data);
     } catch (error) {
       console.error("Erreur lors du chargement des transactions", error);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/login');
+  const updateStatus = async (id, newStatus, userId) => {
+    try {
+      // 1. تحديث حالة المعاملة
+      await axios.patch(
+        `http://127.0.0.1:8000/api/demandes/${id}/status`,
+        { status: newStatus },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
+
+      // 2. إرسال notification للمستخدم
+      await axios.post(
+        'http://127.0.0.1:8000/api/notifications',
+        {
+          user_id: userId,
+          title: 'تحديث حالة المعاملة',
+          message: `تم ${newStatus === 'accepté' ? 'قبول' : 'رفض'} المعاملة رقم ${id}`,
+          is_read: false,
+        },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
+
+      // 3. إعادة تحميل المعاملات
+      fetchTransactions();
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour ou notification', error);
+    }
   };
+
+  
 
   return (
     <div className="dashboard-container">
@@ -44,13 +76,41 @@ function Transactions() {
         </div>
         <nav>
           <ul className="nav-menu">
-            <li className="nav-item"><Link to="/dashboard" className="nav-link">Vue d'ensemble</Link></li>
-            <li className="nav-item"><Link to="/Proprietes" className="nav-link">Propriétés</Link></li>
-            <li className="nav-item"><Link to="/Clients" className="nav-link">Clients</Link></li>
-            <li className="nav-item"><Link to="/Transactions" className="nav-link active">Transactions</Link></li>
-            <li className="nav-item"><a href="#" className="nav-link">Rapports</a></li>
-            <li className="nav-item"><a href="#" className="nav-link">Calendrier</a></li>
-            <li className="nav-item"><a href="#" className="nav-link">Paramètres</a></li>
+            <li className="nav-item">
+              <Link to="/dashboard" className="nav-link">
+                Vue d'ensemble
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/Proprietes" className="nav-link">
+                Propriétés
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/Clients" className="nav-link">
+                Clients
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/Transactions" className="nav-link active">
+                Transactions
+              </Link>
+            </li>
+            <li className="nav-item">
+              <a href="#" className="nav-link">
+                Rapports
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="#" className="nav-link">
+                Calendrier
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="#" className="nav-link">
+                Paramètres
+              </a>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -65,22 +125,38 @@ function Transactions() {
               <th>Propriété</th>
               <th>Montant</th>
               <th>Date</th>
-              <th>Statut</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {transactions.map((t, index) => (
               <tr key={index}>
                 <td>{t.id}</td>
-                <td>{t.client_name}</td>
-                <td>{t.property_title}</td>
-                <td>{t.amount} MAD</td>
-                <td>{new Date(t.date).toLocaleDateString()}</td>
+                <td>{t.user?.name || 'N/A'}</td>
+                <td>{t.immobilier?.titre || 'N/A'}</td>
+                <td>{t.immobilier?.prix} MAD</td>
+                <td>{new Date(t.created_at).toLocaleDateString()}</td>
                 <td>{t.status}</td>
+                <td>
+                  <button
+                    onClick={() => updateStatus(t.id, 'accepté', t.user?.id)}
+                    className="btn-accept"
+                  >
+                    Accepter
+                  </button>
+                  <button
+                    onClick={() => updateStatus(t.id, 'refusé', t.user?.id)}
+                    className="btn-refuse"
+                  >
+                    Refuser
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        
       </main>
     </div>
   );
