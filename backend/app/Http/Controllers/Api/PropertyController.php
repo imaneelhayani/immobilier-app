@@ -70,6 +70,21 @@ class PropertyController extends Controller
 
         return response()->json(['message' => 'Propriété ajoutée avec succès', 'data' => $propriete]);
     }
+public function stats()
+{
+    $stats = [
+        'location_vs_vente' => Immobilier::select('type', \DB::raw('count(*) as total'))
+            ->groupBy('type')
+            ->get(),
+
+        'top_villes' => Immobilier::select('ville', \DB::raw('count(*) as total'))
+            ->groupBy('ville')
+            ->orderBy('total', 'desc')
+            ->get()
+    ];
+
+    return response()->json($stats);
+}
 
 
 

@@ -21,9 +21,10 @@ Route::delete('/immobiliers/{id}', [ImmobilierController::class, 'destroy']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/immobiliers', [PropertyController::class, 'store']);
     Route::post('/demandes', [DemandeController::class, 'store']);
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+   Route::get('/user', function (Request $request) {
+    return $request->user()->load('demandes.immobilier');
+});
+
     Route::get('/demandes', function (Request $request) {
         return $request->user()->demandes()->with('immobilier')->get();
     });
@@ -47,4 +48,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // إنشاء إشعار جديد (مثلاً من الأدمين)
     Route::post('/notifications', [NotificationController::class, 'store']);
+    Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user/demandes', [DemandeController::class, 'userDemandes']);
 });
+Route::middleware('auth:sanctum')->group(function () {
+    // ...
+
+    Route::delete('/demandes/{id}', [DemandeController::class, 'destroy']);
+
+    // ...
+});
+
+
+});
+Route::middleware('auth:sanctum')->get('/contact', [ContactController::class, 'index']);
+Route::delete('/contact/{id}', [ContactController::class, 'destroy']);
+Route::get('/properties/stats', [PropertyController::class, 'stats']);
+Route::get('/demandes/stats', [DemandeController::class, 'stats']);
+
+

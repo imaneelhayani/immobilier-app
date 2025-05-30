@@ -6,6 +6,7 @@ use App\Models\Demande;
 use App\Models\Immobilier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; // ✅ ضروري هادا
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 
@@ -76,4 +77,59 @@ class DemandeController extends Controller
 
         return response()->json(['message' => 'Statut mis à jour et notification envoyée avec succès']);
     }
+    public function userDemandes(Request $request)
+{
+    $user = $request->user();
+
+    $demandes = $user->demandes()->with('immobilier')->get();
+
+    return response()->json($demandes);
+}
+public function destroy(Request $request, $id)
+{
+    $user = $request->user();
+
+    $demande = Demande::find($id);
+
+    if (!$demande) {
+        return response()->json(['message' => 'Demande introuvable'], 404);
+    }
+
+    // Vérifier que la demande appartient bien à l'utilisateur connecté
+    if ($demande->user_id !== $user->id) {
+        return response()->json(['message' => "Vous n'êtes pas autorisé à supprimer cette demande"], 403);
+    }
+
+    // On autorise la suppression uniquement si le statut est "en_attente"
+    if ($demande->status !== 'en_attente') {
+        return response()->json(['message' => "La demande ne peut être supprimée car son statut n'est pas 'en_attente'"], 403);
+    }
+
+    $demande->delete();
+
+    return response()->json(['message' => 'Demande supprimée avec succès']);
+}
+
+public function stats()
+{
+    $topVilles = DB::table('demandes')
+        ->join('immobiliers', 'demandes.immobilier_id', '=', 'immobiliers.id')
+        ->select('immobiliers.ville', DB::raw('count(*) as total'))
+        ->groupBy('immobiliers.ville')
+        ->orderByDesc('total')
+        ->limit(5)
+        ->get();
+
+    $topTypes = Demande::select('etat_transation as type', \DB::raw('count(*) as total'))
+        ->groupBy('etat_transation')
+        ->orderByDesc('total')
+        ->get();
+
+    return response()->json([
+        'top_villes' => $topVilles,
+        'top_types' => $topTypes,
+    ]);
+}
+
+
 }

@@ -36,6 +36,7 @@ function Login() {
         setSuccess(false);
         if (data.errors) setErrors(data.errors);
         else if (data.error) setMessage(data.error);
+        else if (data.message) setMessage(data.message); // 👈 مهم باش يبان error
         else setMessage('Une erreur inconnue est survenue');
       } else {
         setSuccess(true);

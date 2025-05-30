@@ -36,4 +36,26 @@ class ContactController extends Controller
             'data' => $contact
         ], 201);
     }
+    public function index()
+{
+    $contacts = Contact::latest()->get(); // tu peux ajouter pagination si besoin
+    return response()->json([
+        'success' => true,
+        'data' => $contacts
+    ]);
+}
+public function destroy($id)
+{
+    $contact = Contact::find($id);
+
+    if (!$contact) {
+        return response()->json(['message' => 'Message introuvable'], 404);
+    }
+
+    $contact->delete();
+
+    return response()->json(['message' => 'Message supprimé avec succès']);
+}
+
+
 }

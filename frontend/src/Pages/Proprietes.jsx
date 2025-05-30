@@ -65,16 +65,16 @@ const fetchImmobiliers = async () => {
           <h2>Real Estate Admin</h2>
         </div>
         <nav>
-          <ul className="nav-menu">
-                      <li className="nav-item"><Link to="/dashboard" className="nav-link">Vue d'ensemble</Link></li>
-                      <li className="nav-item"><Link to="/Proprietes" className="nav-link">Propriétés</Link></li>
-                      <li className="nav-item"><Link to="/Clients" className="nav-link">Clients</Link></li>
-                      <li className="nav-item"><Link to="/Transactions" className="nav-link">Transactions</Link></li>
-                      <li className="nav-item"><a href="#" className="nav-link">Rapports</a></li>
-                      <li className="nav-item"><a href="#" className="nav-link">Calendrier</a></li>
-                      <li className="nav-item"><a href="#" className="nav-link">Paramètres</a></li>
-                    </ul>
-        </nav>
+                      <ul className="nav-menu">
+                                            <li className="nav-item"><Link to="/dashboard" className="nav-link">Vue d'ensemble</Link></li>
+                                            <li className="nav-item"><Link to="/Proprietes" className="nav-link">Propriétés</Link></li>
+                                            <li className="nav-item"><Link to="/Clients" className="nav-link">Clients</Link></li>
+                                            <li className="nav-item"><Link to="/Transactions" className="nav-link">Transactions</Link></li>
+                                            <li className="nav-item"><Link to="/Messages" className="nav-link">Messages</Link></li>
+                                            <li className="nav-item"><a href="#" className="nav-link">Calendrier</a></li>
+                                            <li className="nav-item"><a href="#" className="nav-link">Paramètres</a></li>
+                                          </ul>
+                    </nav>
       </aside>
 
       <main className="main-content">

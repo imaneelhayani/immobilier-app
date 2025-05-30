@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import '../Styles/Commandes.css';
 
 const API_URL = 'http://localhost:8000/api';  // عدل هاد ال URL حسب بورت Laravel ديالك
 
@@ -23,16 +24,9 @@ function Commandes() {
 
   if (!property) return <p>Property not found.</p>;
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/');
-  };
+ 
 
-  const handleProfile = () => {
-    navigate('/profile');
-  };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -79,14 +73,7 @@ function Commandes() {
 
   return (
     <div className="commande-details max-w-4xl mx-auto p-6 bg-white rounded shadow mt-10">
-      <div className="flex justify-end space-x-4 mb-6">
-        <button onClick={handleProfile} className="btn-profile px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Profile
-        </button>
-        <button onClick={handleLogout} className="btn-logout px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-          Déconnexion
-        </button>
-      </div>
+      
 
       <h2 className="text-2xl font-bold mb-4">Détails de la commande pour la propriété</h2>
       <h3 className="text-xl mb-2">{property.titre || property.type}</h3>

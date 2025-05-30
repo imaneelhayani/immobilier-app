@@ -19,6 +19,8 @@ import CommandeModal from './Pages/CommandeModal';
 import Commandes from './Pages/Commandes.jsx';
 import Profile from './Pages/Profile.jsx';
 import Notifications from './Pages/Notifications.jsx';
+import Messages from './Pages/Messages.jsx';
+
 function App() {
   return (
     <BrowserRouter>
@@ -39,6 +41,8 @@ function App() {
         <Route path="/Commandes" element={<MainLayout><Commandes /></MainLayout>} />
         <Route path="/Profile" element={<MainLayout><Profile /></MainLayout>} />
         <Route path="/Notifications" element={<MainLayout><Notifications /></MainLayout>} />
+        <Route path="/Messages" element={<MainLayout><Messages /></MainLayout>} />
+
       </Routes>
     </BrowserRouter>
   );
